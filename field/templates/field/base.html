@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AgField</title>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
+  <link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
+  <style type="text/css">
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+  <div class="container">
+    <ul class="nav navbar-nav">
+      <li class="active">
+        <a href="/"><span class="glyphicon glyphicon-home"></span> Home</a>
+      </li>
+      <li>
+        <a href="/about/"><span class="glyphicon glyphicon-user"></span> About the Author</a>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

@@ -1,7 +1,12 @@
-from django.shortcuts import render
 from django.http import HttpResponse
+from django.template import loader
+from django.conf import settings
 #import os
 
 # Create your views here.
 def index(request):
-    return render(request, 'index.html')
+    template = loader.get_template('field/index.html')
+    context = {
+        'mapbox_key' : settings.MAPBOX_API_KEY
+    }
+    return HttpResponse(template.render(context, request))

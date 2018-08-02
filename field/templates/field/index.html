@@ -1,0 +1,20 @@
+{% extends "field/base.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="jumbotron text-center">
+  <div class="container">
+    <h1>AgField App</h1>
+    <p>Field data from a map click.</p>
+  </div>
+</div>
+<div class="container">
+  <hr>
+  <div id='map'></div>
+</div>
+<script>
+  L.mapbox.accessToken = {{ mapbox_key }};
+  var map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([40, -74.50], 9);
+</script>
+{% endblock %}
