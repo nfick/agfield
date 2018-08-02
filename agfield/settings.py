@@ -131,4 +131,8 @@ DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
 GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
 
+# API Keys
+
+MAPBOX_API_KEY = os.environ['MAPBOX_API_KEY']
+
 django_heroku.settings(locals())
