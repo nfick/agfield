@@ -14,8 +14,51 @@
       <h3><span class="glyphicon glyphicon-info-sign"></span> How this sample app works</h3>
       <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
       <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
+      <style>
+      .coordinates {
+          background: rgba(0,0,0,0.5);
+          color: #fff;
+          position: relative;
+          bottom: 80px;
+          left: 10px;
+          padding:5px 10px;
+          margin: 0;
+          font-size: 11px;
+          line-height: 18px;
+          border-radius: 3px;
+          display: none;
+      }
+      </style>
+
       <div id='map' style='width: 100%; height: 400px;'></div>
+      <pre id='coordinates' class='coordinates'></pre>
+
       <script>
+        function addMarker(m){
+          if (typeof marker !== "undefined" ){ 
+            marker.remove();         
+          }
+
+          //add marker
+          marker = new  mapboxgl.Marker({
+              draggable: true
+          })
+              .setLngLat([m.lngLat.lng, m.lngLat.lat])
+              .addTo(map);
+
+          displayCoords(marker);
+        }
+
+        function onDragEnd() {
+          displayCoords(marker);
+        }
+
+        function displayCoords(m) {
+          lngLat = m.getLngLat();
+          coordinates.style.display = 'inline-block';
+          coordinates.innerHTML = 'Longitude: ' + lngLat.lng + '<br />Latitude: ' + lngLat.lng;
+        } 
+
         mapboxgl.accessToken = "{{ mapbox_key }}";
         var map = new mapboxgl.Map({
           container: 'map', // container id
@@ -24,9 +67,17 @@
           zoom: 12 // starting zoom
         });
 
+        var marker;
+        var lngLat;
+
         map.addControl(new MapboxGeocoder({
           accessToken: mapboxgl.accessToken
         }));
+
+        map.on('click', addMarker);
+
+        marker.on('dragend', onDragEnd);
+
       </script>
 	</div>
 </div>
