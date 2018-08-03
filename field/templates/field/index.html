@@ -10,11 +10,25 @@
 </div>
 <div class="container">
   <hr>
-  <div id='map'></div>
+    <div class="row">
+      <h3><span class="glyphicon glyphicon-info-sign"></span> How this sample app works</h3>
+      <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
+      <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
+      <div id='map' style='width: 100%; height: 400px;'></div>
+      <script>
+        mapboxgl.accessToken = "{{ mapbox_key }}";
+        var map = new mapboxgl.Map({
+          container: 'map', // container id
+          style: 'mapbox://styles/mapbox/satellite-v9',
+          center: [-71.0691572, 42.3604266], // starting position
+          zoom: 12 // starting zoom
+        });
+
+        map.addControl(new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken
+        }));
+      </script>
+	</div>
 </div>
-<script>
-  L.mapbox.accessToken = {{ mapbox_key }};
-  var map = L.mapbox.map('map', 'mapbox.streets')
-    .setView([40, -74.50], 9);
-</script>
+
 {% endblock %}
