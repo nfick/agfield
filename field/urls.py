@@ -3,4 +3,8 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^about', views.about, name='about'),
+    url(r'^samples', views.samples, name='samples'),
+    url(r'^findedges', views.findedges, name='findedges'),
+    url(r'^twodlidar', views.twodlidar, name='twodlidar'),
 ]

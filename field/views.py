@@ -10,3 +10,28 @@ def index(request):
         'mapbox_key' : settings.MAPBOX_API_KEY
     }
     return HttpResponse(template.render(context, request))
+
+def about(request):
+    template = loader.get_template('field/index.html')
+    context = {
+        'mapbox_key' : settings.MAPBOX_API_KEY
+    }
+    return HttpResponse(template.render(context, request))
+
+def samples(request):
+    template = loader.get_template('field/samples.html')
+    context = {
+    }
+    return HttpResponse(template.render(context, request))
+
+def findedges(request):
+    template = loader.get_template('field/findedges.html')
+    context = {
+    }
+    return HttpResponse(template.render(context, request))
+
+def twodlidar(request):
+    template = loader.get_template('field/twodlidar.html')
+    context = {
+    }
+    return HttpResponse(template.render(context, request))

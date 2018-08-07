@@ -24,9 +24,9 @@ $(document).ready(function(){
     swLngLat = lngLatBounds.getSouthWest();
     neLngLat = lngLatBounds.getNorthEast();
     coordinates.style.display = 'inline-block';
-    coordinates.innerHTML = 'Longitude: ' + lngLat.lng + '<br />Latitude: ' + lngLat.lat
-      + '<br /> SW Longitude: ' + swLngLat.lng + '<br />SW Latitude: ' + swLngLat.lat 
-      + '<br /> NE Longitude: ' + neLngLat.lng + '<br />NE Latitude: ' + neLngLat.lat;
+    coordinates.innerHTML = 'Longitude: ' + lngLat.lng + '<br />Latitude: ' + lngLat.lat;
+      //+ '<br /> SW Longitude: ' + swLngLat.lng + '<br />SW Latitude: ' + swLngLat.lat 
+      //+ '<br /> NE Longitude: ' + neLngLat.lng + '<br />NE Latitude: ' + neLngLat.lat;
     deffered.resolve(lngLat);
     return deffered.promise();
   } 
@@ -35,7 +35,7 @@ $(document).ready(function(){
     var promise = displayCoords(m);
     promise.then(function() { 
       img = map.getCanvas().toDataURL('image/png');
-      document.getElementById("image").innerHTML = img;
+      //document.getElementById("image").innerHTML = img;
     });
   }
 

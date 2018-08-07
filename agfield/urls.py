@@ -12,6 +12,7 @@ import field.views
 
 urlpatterns = [
     url(r'^$', field.views.index, name='index'),
+    url(r'^about', field.views.about, name='about'),
     url(r'^field/', include('field.urls')),
     path('admin/', admin.site.urls),
 ]
