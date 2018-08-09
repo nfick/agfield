@@ -11,6 +11,8 @@ dj-database-url = "*"
 "psycopg2" = "*"
 whitenoise = "*"
 opencv-python = "*"
+matplotlib = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.6"
