@@ -13,6 +13,8 @@ $(document).ready(function(){
         .addTo(map);
 
     updateImage(marker);
+
+    marker.on('dragend', updateImage);
   }
 
   function displayCoords(m) {
@@ -25,17 +27,18 @@ $(document).ready(function(){
     neLngLat = lngLatBounds.getNorthEast();
     coordinates.style.display = 'inline-block';
     coordinates.innerHTML = 'Longitude: ' + lngLat.lng + '<br />Latitude: ' + lngLat.lat;
-      //+ '<br /> SW Longitude: ' + swLngLat.lng + '<br />SW Latitude: ' + swLngLat.lat 
-      //+ '<br /> NE Longitude: ' + neLngLat.lng + '<br />NE Latitude: ' + neLngLat.lat;
+    document.getElementById("coordinates_hidden").innerHTML =
+        'SW Longitude: ' + swLngLat.lng + ', SW Latitude: ' + swLngLat.lat 
+      + ', NE Longitude: ' + neLngLat.lng + ', NE Latitude: ' + neLngLat.lat;
     deffered.resolve(lngLat);
     return deffered.promise();
-  } 
+  }
 
-  function updateImage(m) {
-    var promise = displayCoords(m);
+  function updateImage() {
+    var promise = displayCoords(marker);
     promise.then(function() { 
       img = map.getCanvas().toDataURL('image/png');
-      //document.getElementById("image").innerHTML = img;
+      document.getElementById("image").innerHTML = img;
     });
   }
 
@@ -59,5 +62,5 @@ $(document).ready(function(){
 
   map.on('click', changeMarker);
 
-  marker.on('dragend', updateImage);
+  //marker.on('dragend', updateImage);
 });

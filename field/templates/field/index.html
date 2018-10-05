@@ -20,13 +20,16 @@
       display: none;
   }
   </style>
-
   <div id='map' style='width: 100%; height: 400px;'></div>
-  <pre id='coordinates' class='coordinates'></pre>
-  <p id='image' style='word-wrap: break-word;'></p>
-  <script type="text/javascript">
-    var mapbox_key = "{{ mapbox_key }}";
-  </script>
-  <script type="text/javascript" src="{% static '/js/index.js'%}" defer=""></script>
+  <form action="." method="post">
+    {% csrf_token %}
+    <pre id='coordinates' class='coordinates'></pre>
+    <input type='hidden' id='coordinates_hidden' name='coordinates_hidden' value = ''>
+    <input type='hidden' id='image' name='image' value=''>
+    <script type="text/javascript">
+      var mapbox_key = "{{ mapbox_key }}";
+    </script>
+    <script type="text/javascript" src="{% static '/js/index.js'%}" defer=""></script>
+  </form>
 </div>
 {% endblock %}

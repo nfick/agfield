@@ -133,6 +133,6 @@ GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
 
 # API Keys
 
-MAPBOX_API_KEY = os.environ['MAPBOX_API_KEY']
-
+# MAPBOX_API_KEY = os.environ['MAPBOX_API_KEY']
+MAPBOX_API_KEY='pk.eyJ1IjoibmZpY2siLCJhIjoiY2prYWh6MWs2MXhmbTNxb2hxeHVlcm5kciJ9.5MRPJ-wBNml5ZJsv4bAPfA'
 django_heroku.settings(locals())

@@ -1,0 +1,15 @@
+{% extends "field/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="row">
+  <hr>
+  <video width='600' autoplay controls loop>
+    <source src="{% static '/images/lidar.mp4'%}" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <hr>
+  <img src="{% static '/images/test_img1_lidar.png'%}">
+  <hr>
+  <img src="{% static '/images/test_img2_lidar.png'%}">
+</div>
+{% endblock %}
