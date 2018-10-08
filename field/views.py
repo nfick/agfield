@@ -39,38 +39,38 @@ def twodlidar(request):
     }
     return HttpResponse(template.render(context, request))
 
-def step1(request):
-    template = loader.get_template('field/step1.html')
+def step(request, step_num):
+    template = loader.get_template('field/step{}.html'.format(step_num))
     context = {
     }
     return HttpResponse(template.render(context, request))
 
-def step2(request):
-    template = loader.get_template('field/step2.html')
-    context = {
-    }
-    return HttpResponse(template.render(context, request))
+# def step2(request):
+#     template = loader.get_template('field/step2.html')
+#     context = {
+#     }
+#     return HttpResponse(template.render(context, request))
 
-def step3(request):
-    template = loader.get_template('field/step3.html')
-    context = {
-    }
-    return HttpResponse(template.render(context, request))
+# def step3(request):
+#     template = loader.get_template('field/step3.html')
+#     context = {
+#     }
+#     return HttpResponse(template.render(context, request))
 
-def step4(request):
-    template = loader.get_template('field/step4.html')
-    context = {
-    }
-    return HttpResponse(template.render(context, request))
+# def step4(request):
+#     template = loader.get_template('field/step4.html')
+#     context = {
+#     }
+#     return HttpResponse(template.render(context, request))
 
-def step5(request):
-    template = loader.get_template('field/step5.html')
-    context = {
-    }
-    return HttpResponse(template.render(context, request))
+# def step5(request):
+#     template = loader.get_template('field/step5.html')
+#     context = {
+#     }
+#     return HttpResponse(template.render(context, request))
 
-def step6(request):
-    template = loader.get_template('field/step6.html')
-    context = {
-    }
-    return HttpResponse(template.render(context, request))
+# def step6(request):
+#     template = loader.get_template('field/step6.html')
+#     context = {
+#     }
+#     return HttpResponse(template.render(context, request))
