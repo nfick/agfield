@@ -16,9 +16,8 @@ def index(request):
         return HttpResponse(template.render(context, request))
 
 def about(request):
-    template = loader.get_template('field/index.html')
+    template = loader.get_template('field/about.html')
     context = {
-        'mapbox_key' : settings.MAPBOX_API_KEY
     }
     return HttpResponse(template.render(context, request))
 
