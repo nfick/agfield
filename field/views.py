@@ -1,13 +1,21 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.conf import settings
+from .models  import FindMap
 #import os
 
 # Create your views here.
 def index(request):
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        print(request.POST)
+        # create a form instance and populate it with data from the request
+        items = [(key, value) for key, value in request.POST.items()]
+        image = request.POST.get('image')
+        #print('\n'.join(image))
+        coords = request.POST.get('coordinates_hidden')
+        find = FindMap(coords, image)
+        polygon = find.get_geojson_polygon()
+        #print(polygon)
+        return JsonResponse(polygon)
     else:
         template = loader.get_template('field/index.html')
         context = {
@@ -44,33 +52,3 @@ def step(request, step_num):
     context = {
     }
     return HttpResponse(template.render(context, request))
-
-# def step2(request):
-#     template = loader.get_template('field/step2.html')
-#     context = {
-#     }
-#     return HttpResponse(template.render(context, request))
-
-# def step3(request):
-#     template = loader.get_template('field/step3.html')
-#     context = {
-#     }
-#     return HttpResponse(template.render(context, request))
-
-# def step4(request):
-#     template = loader.get_template('field/step4.html')
-#     context = {
-#     }
-#     return HttpResponse(template.render(context, request))
-
-# def step5(request):
-#     template = loader.get_template('field/step5.html')
-#     context = {
-#     }
-#     return HttpResponse(template.render(context, request))
-
-# def step6(request):
-#     template = loader.get_template('field/step6.html')
-#     context = {
-#     }
-#     return HttpResponse(template.render(context, request))

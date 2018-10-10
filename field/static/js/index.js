@@ -27,9 +27,10 @@ $(document).ready(function(){
     neLngLat = lngLatBounds.getNorthEast();
     coordinates.style.display = 'inline-block';
     coordinates.innerHTML = 'Longitude: ' + lngLat.lng + '<br />Latitude: ' + lngLat.lat;
-    document.getElementById("coordinates_hidden").innerHTML =
-        'SW Longitude: ' + swLngLat.lng + ', SW Latitude: ' + swLngLat.lat 
-      + ', NE Longitude: ' + neLngLat.lng + ', NE Latitude: ' + neLngLat.lat;
+    document.getElementById("coordinates_hidden").value =
+        '{"Longitude": ' + lngLat.lng + ', "Latitude": ' + lngLat.lat
+      + ', "SW Longitude": ' + swLngLat.lng + ', "SW Latitude": ' + swLngLat.lat 
+      + ', "NE Longitude": ' + neLngLat.lng + ', "NE Latitude": ' + neLngLat.lat +'}';
     deffered.resolve(lngLat);
     return deffered.promise();
   }
@@ -38,7 +39,43 @@ $(document).ready(function(){
     var promise = displayCoords(marker);
     promise.then(function() { 
       img = map.getCanvas().toDataURL('image/png');
-      document.getElementById("image").innerHTML = img;
+      document.getElementById("image").value = img;
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '.');
+      xhr.onload = function(event){
+        polygon = JSON.parse(event.target.response);
+        // alert(JSON.stringify(polygon, null, 1));
+        if (map.getLayer('field')){
+          map.removeLayer('field');
+        }
+        if (map.getSource('field')){
+          map.removeSource('field')
+        };
+        map.addSource('field', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': polygon
+            }
+        });
+        map.addLayer({
+            'id': 'field',
+            'type': 'fill',
+            'source': 'field',
+            'layout': {},
+            'paint': {
+                'fill-color': '#088',
+                'fill-opacity': 0.8
+            }
+        });
+      };
+      var formData = new FormData(document.getElementById('map_form'));
+      xhr.send(formData);
+      // $.post('.', $('#map_form').serialize(), function(data) {
+      //   alert(data);
+      // });
+      //polygon = document.getElementById('map_form').submit();
+      
     });
   }
 
