@@ -276,14 +276,14 @@ class FindMap():
             return vertices.astype(int)
 
         imgs = get_imgs(self.img)
-        print_imgs(imgs)
+        #print_imgs(imgs)
         index, center, radius = get_start_img(imgs)
         index2 = index
         if index > 0:
             index2 = index - 1
         pic = imgs[3][index].copy()
         polygon = get_lidar_polygon(center, radius, imgs[2][index], imgs[0][index2])
-        print_polygon(pic,polygon,center)
+        #print_polygon(pic,polygon,center)
 
         geo_polygon = self.points_to_geojson(polygon, imgs[2][index].shape)
         geo_polygon.append(geo_polygon[0])
