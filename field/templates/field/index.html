@@ -2,6 +2,16 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
+  <h2>Instructions</h2>
+  <ul>
+    <li>Search for location via the search</li>
+    <li>Zoom to field, so field is at least 1/4 of map height.</li>
+    <li>Click near center</li>
+  </ul>
+  <p>This is still a work in progress. The current model is heuristic.
+    Next step is to capture training data and train a convolutional neural network.</p>
+</div>
+<div class="row">
   <hr>
   <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.min.js'></script>
   <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.3.0/mapbox-gl-geocoder.css' type='text/css' />
@@ -24,7 +34,7 @@
   <form id='map_form' action="." method="post">
     {% csrf_token %}
     <pre id='coordinates' class='coordinates'></pre>
-    <input type='text' id='coordinates_hidden' name='coordinates_hidden' value = ''/>
+    <input type='hidden' id='coordinates_hidden' name='coordinates_hidden' value = ''/>
     <input type='hidden' id='image' name='image' value=''/>
     <script type="text/javascript">
       var mapbox_key = "{{ mapbox_key }}";

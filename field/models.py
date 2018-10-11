@@ -34,6 +34,10 @@ class FindMap():
         self.field_y = (self.ne_lat-lat)*(self.img.shape[0]/(self.ne_lat-self.sw_lat))
         self.field_y = int(round(self.field_y))
 
+        self.PYRAMID_HEIGHT = 5
+        self.CANNY_LOWER = 50 # was 50
+        self.CANNY_HIGHER = 150
+
     def get_geojson_polygon(self):
         def invert_pixels(img):
             img = cv2.bitwise_not(img)
@@ -48,10 +52,11 @@ class FindMap():
             mask = get_circle_mask(center, radius, img)
             result = img & mask
             
-            mask_sum = np.sum(mask)
-            result_sum = np.sum(result)
+            mask_sum = np.sum(mask.astype(int))
+            result_sum = np.sum(result.astype(int))
             coverage = (result_sum-mask_sum)/mask_sum
-            return [result,coverage]
+            #print(coverage)
+            return [result,abs(coverage)]
 
         def get_ring(center,radius, img, indx):
             mask = np.zeros(img.shape, dtype=np.uint8)
@@ -91,6 +96,7 @@ class FindMap():
                     cv2.ellipse(img, (center[0],center[1]), (r,r), 0,
                                 np.rad2deg(a_min), np.rad2deg(a_max), 255, -1)
 
+                #print_img_points(img, img_ring.T, indx)
                 return [img_ring, img]
             img_ring = np.array([[],[],[],[]])
             return [img_ring, img]
@@ -101,7 +107,7 @@ class FindMap():
             hcorner_centroids = []
             imgs = []
             #print(img.shape)
-            for i in range(4):
+            for i in range(self.PYRAMID_HEIGHT):
                 # get harris corner image
                 cImg = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
                 cImg = np.float32(cImg)
@@ -119,7 +125,7 @@ class FindMap():
                 ret, labels, stats, centroids = cv2.connectedComponentsWithStats(dst)
                 hcorner_centroids.append(centroids)
                 
-                eImg = cv2.Canny(img,50,150)
+                eImg = cv2.Canny(img,self.CANNY_LOWER,self.CANNY_HIGHER)
                 eImg = invert_pixels(eImg)
                 ret, eImg = cv2.threshold(eImg, 90, 255, cv2.THRESH_BINARY)
                 eA.append(eImg)
@@ -139,7 +145,7 @@ class FindMap():
                 plt.xticks([]),plt.yticks([])
                 
             #plt.show()
-            plt.savefig("./pyramid.png")
+            plt.savefig("./images/pyramid.png")
 
         def print_polygon(img, pts, center):
             pts = pts.reshape((-1,1,2))
@@ -150,7 +156,7 @@ class FindMap():
             plt.imshow(img,'gray')
             plt.xticks([]),plt.yticks([])
             #plt.show()
-            plt.savefig("./field2")
+            plt.savefig("./images/field2")
             
         def print_img(img, point):
             cv2.circle(img, point, 1, (150,0,0), -1)
@@ -159,7 +165,7 @@ class FindMap():
             plt.imshow(img,'gray')
             plt.xticks([]),plt.yticks([])
             #plt.show()
-            plt.savefig("./field1")
+            plt.savefig("./images/field1")
             
         def print_img_points(image, points, i):
             for point in points:
@@ -169,16 +175,15 @@ class FindMap():
             plt.figure(figsize=(18, 16), dpi= 80, facecolor='w', edgecolor='k')
             plt.imshow(image,'gray')
             plt.xticks([]),plt.yticks([])
-            plt.show()
-            #plt.savefig("./Lidar/%d"%i, transparent=True)
+            #plt.show()
+            plt.savefig("./images/Lidar/%d"%i, transparent=True)
 
         def get_start_img(imgs):
-            img = np.array([0])
             imgA = []
             for i in range(len(imgs[2])):
                 img = imgs[2][i]
                 center = [int(round(self.field_x/(2**i))),int(round(self.field_y/(2**i)))]
-                radius = int(round(img.shape[0]/8))
+                radius = int(round(img.shape[0]/6))
                 img, coverage = get_circle(center, radius, img)
                 if coverage < 0.01:
                     return [i, center, radius]
@@ -203,7 +208,7 @@ class FindMap():
 
             angle = np.arccos(np.clip(np.einsum('ij,ij->i',v1_u,v2_u), -1.0, 1.0))
             zeros = np.zeros(p0.shape, dtype=np.uint8)
-            p0 = np.where(angle[:, None] < 1.2, p0, zeros)
+            p0 = np.where(angle[:, None] < 0.5, p0, zeros) # 1 was 1.2
             p0 = p0[np.nonzero(p0)].reshape((-1,2))
             p0 = p0.T
             row_count = p_df.shape[0]
@@ -211,7 +216,7 @@ class FindMap():
             mask_y = np.logical_not(p_df['y'].isin(p0[1]))
             p_df = p_df.loc[mask_x | mask_y]
             new_row_count = p_df.shape[0]
-            if row_count != new_row_count and new_row_count > 3:
+            if row_count != new_row_count and new_row_count > 4:
                 return remove_small_angles(p_df, img)
             return p_df
 
@@ -227,6 +232,7 @@ class FindMap():
             corners = np.round(corners/2).astype(int)
 
             vertices = p_df[['x','y']].values
+            #print_polygon(img, vertices.astype(int), (center[0],center[1]))
             closest_index = np.array([closest_point(pt,corners) for pt in vertices])
             corner_dist = closest_index.T[0]
             closest_index = closest_index.T[1].astype(int)
@@ -236,7 +242,7 @@ class FindMap():
 
             p_df = p_df.sort_values('corner_dist')
             p_df.reset_index(drop=True, inplace=True)
-            p_df = p_df.loc[p_df['corner_dist'] <= p_df['corner_dist'][int(p_df.shape[0]*0.75)]]
+            p_df = p_df.loc[p_df['corner_dist'] <= p_df['corner_dist'][int(p_df.shape[0]*0.70)]]
 
             p_df = p_df.sort_values('angle_origin')
             p_df = p_df[['closest_corner_x', 'closest_corner_y']].drop_duplicates()
@@ -278,11 +284,13 @@ class FindMap():
         imgs = get_imgs(self.img)
         #print_imgs(imgs)
         index, center, radius = get_start_img(imgs)
+        #print(index, center, radius)
         index2 = index
         if index > 0:
             index2 = index - 1
         pic = imgs[3][index].copy()
         polygon = get_lidar_polygon(center, radius, imgs[2][index], imgs[0][index2])
+        #print_img(imgs[2][index], (center[0],center[1]))
         #print_polygon(pic,polygon,center)
 
         geo_polygon = self.points_to_geojson(polygon, imgs[2][index].shape)

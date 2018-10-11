@@ -19,6 +19,12 @@ $(document).ready(function(){
 
   function displayCoords(m) {
     var deffered = $.Deferred();
+    if (map.getLayer('field')){
+      map.removeLayer('field');
+    };
+    if (map.getSource('field')){
+      map.removeSource('field');
+    }; 
     lngLat = m.getLngLat();
     map.setBearing(0);
     map.setPitch(0);
@@ -37,20 +43,13 @@ $(document).ready(function(){
 
   function updateImage() {
     var promise = displayCoords(marker);
-    promise.then(function() { 
+    promise.then(function() {
       img = map.getCanvas().toDataURL('image/png');
       document.getElementById("image").value = img;
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '.');
       xhr.onload = function(event){
         polygon = JSON.parse(event.target.response);
-        // alert(JSON.stringify(polygon, null, 1));
-        if (map.getLayer('field')){
-          map.removeLayer('field');
-        }
-        if (map.getSource('field')){
-          map.removeSource('field')
-        };
         map.addSource('field', {
             'type': 'geojson',
             'data': {
@@ -84,7 +83,7 @@ $(document).ready(function(){
   var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-v9',
-    center: [-71.0691572, 42.3604266],
+    center: [-96.75, 48], // was [-71.0691572, 42.3604266]
     zoom: 12,
     preserveDrawingBuffer: true
   });
