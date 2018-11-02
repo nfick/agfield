@@ -5,14 +5,95 @@ import cv2
 import numpy as np
 import math
 import pandas as pd
+from pandas.io.json import json_normalize
 import geojson
 import io
 import base64
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+import requests
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+from bokeh.plotting import figure
+from bokeh.embed import json_item
+from bokeh.palettes import Category20
+import simplejson as json
 
 # Create your models here.
+
+class GraphWeather():
+    def __init__(self, start_date, end_date, coordinates):
+        self.start_date = datetime.strptime(start_date,'%m/%d/%Y').strftime('%Y-%m-%d')
+        self.end_date = datetime.strptime(end_date,'%m/%d/%Y').strftime('%Y-%m-%d')
+        # print(self.start_date, self.end_date, sep='\n')
+
+        coordinates = literal_eval(coordinates)
+        self.lat = coordinates['Latitude']
+        self.lon = coordinates['Longitude']
+        self.url = "http://data.rcc-acis.org/GridData"
+        self.params = {
+            'loc': "{},{}".format(self.lon, self.lat),
+            'sdate': "{}".format(self.start_date),
+            'edate': "{}".format(self.end_date),
+            'grid': "21",
+            'elems': 'pcpn,gdd,cdd'
+            }
+        r = requests.get(self.url, params=self.params)
+        data = json.loads(r.content)
+        self.df = pd.DataFrame(data['data'])
+        self.df.columns = ['date', 'pcpn', 'gdd', 'cdd']
+        self.df['date'] = pd.to_datetime(self.df['date'], format='%Y-%m-%d')
+        self.df = self.df.replace(-999, np.nan)
+        self.df['pcpn'] = self.df['pcpn'].replace(-999.0, np.nan)
+
+
+    def get_pcpn_graph(self):
+        # print(df)
+
+        plot = figure(title='Precipitation',
+              x_axis_label='Date',
+              x_axis_type='datetime', 
+              y_axis_label='Percipitation (in)',
+              plot_width=800, plot_height=300)
+
+        plot.line(x=self.df['date'].values, 
+                y=self.df['pcpn'].values,
+                line_width=2, line_color=Category20[20][0])
+
+        pcpn_plot = json.dumps(json_item(plot, "precipitation"))
+        return pcpn_plot
+
+    def get_gdd_graph(self):
+        plot = figure(title='Growing Degree Days',
+              x_axis_label='Date',
+              x_axis_type='datetime', 
+              y_axis_label='GDD (\u00b0F)',
+              plot_width=800, plot_height=300)
+
+        plot.line(x=self.df['date'].values, 
+                y=self.df['gdd'].values,
+                line_width=2, line_color=Category20[20][1])
+
+        gdd_plot = json.dumps(json_item(plot, "gdd"))
+        return gdd_plot
+
+    def get_cdd_graph(self):
+        plot = figure(title='Cooling Degree Days',
+              x_axis_label='Date',
+              x_axis_type='datetime', 
+              y_axis_label='CDD (\u00b0F)',
+              plot_width=800, plot_height=300)
+
+        plot.line(x=self.df['date'].values, 
+                y=self.df['cdd'].values,
+                line_width=2, line_color=Category20[20][2])
+
+        cdd_plot = json.dumps(json_item(plot, "cdd"))
+        return cdd_plot
+        # ticker_df = pandas.DataFrame(data['dataset_data']['data'], 
+        #     columns=raw_data['dataset_data']['column_names'])
+        # ticker_df['Date'] = pandas.to_datetime(ticker_df['Date'])
 
 class FindMap():
     def __init__(self, coordinates, img):

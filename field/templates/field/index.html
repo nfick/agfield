@@ -2,6 +2,9 @@
 {% load staticfiles %}
 {% block content %}
 <div class="row">
+  <h2>Introduction</h2>
+  <p>Currently finds a field based on a mouse click and returns percipitation for that area. 
+  Eventually will incoporated information for yield prediction.</p>
   <h2>Instructions</h2>
   <ul>
     <li>Search for location via the search.</li>
@@ -36,12 +39,25 @@
       display: none;
   }
   </style>
-  <div id='map' style='width: 100%; height: 400px;'></div>
+  <div id='map' style='width: 100%; height: 500px;'></div>
   <form id='map_form' action="." method="post">
     {% csrf_token %}
     <pre id='coordinates' class='coordinates'></pre>
-    <input type='hidden' id='coordinates_hidden' name='coordinates_hidden' value = ''/>
-    <input type='hidden' id='image' name='image' value=''/>
+    <hr>
+    <div class="form-inline form-group mb-2" style="display:none" id="data">
+      <label for="start_date" class="mb-2">Start date:</label>
+      <input type='text' class='form-control mb-2' id='start_date' name='start_date' value = ''/>
+      <label for="end_date" class="mb-2">End date:</label>
+      <input type='text' class='form-control mb-2' id='end_date' name='end_date' value=''/>
+      <!-- <input type='button' class="btn btn-primary mb-2" id='update_date' name='update_date' value='Update'/> -->
+    </div>
+    <div class="form-group" style="display:none">
+      <input type='hidden' id='coordinates_hidden' name='coordinates_hidden' value = ''/>
+      <input type='hidden' id='image' name='image' value=''/>
+    </div>
+    <div class='graphs' id="precipitation"></div>
+    <div class='graphs' id="gdd"></div>
+    <div class='graphs' id="cdd"></div>
     <script type="text/javascript">
       var mapbox_key = "{{ mapbox_key }}";
     </script>

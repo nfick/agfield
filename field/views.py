@@ -1,7 +1,9 @@
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.conf import settings
-from .models  import FindMap
+from .models import FindMap
+from .models import GraphWeather
+import simplejson as json
 #import os
 
 # Create your views here.
@@ -12,10 +14,21 @@ def index(request):
         image = request.POST.get('image')
         #print('\n'.join(image))
         coords = request.POST.get('coordinates_hidden')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        # print('Start date:', start_date, 'End date:', end_date, sep='\n')
+        graphs = GraphWeather(start_date, end_date, coords)
+        pcpn_graph = graphs.get_pcpn_graph()
+        gdd_graph = graphs.get_gdd_graph()
+        cdd_graph = graphs.get_cdd_graph()
+        # print(graph)
         find = FindMap(coords, image)
         polygon = find.get_geojson_polygon()
+
+        data = {'polygon': polygon, 'pcpn_graph': pcpn_graph, 
+                'gdd_graph': gdd_graph,' cdd_graph': cdd_graph}
         #print(polygon)
-        return JsonResponse(polygon)
+        return JsonResponse(data)
     else:
         template = loader.get_template('field/index.html')
         context = {

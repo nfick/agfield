@@ -1,9 +1,20 @@
 $(document).ready(function(){   
+  function initiate_weather(){
+    document.getElementById("data").style.display= 'block';
+
+    $("#end_date").datepicker();
+    $("#end_date").datepicker("setDate", new Date());
+
+    $("#start_date").datepicker();
+    $("#start_date").datepicker("setDate", new Date(new Date().setFullYear(new Date().getFullYear() - 1)));
+  }
 
   function changeMarker(m){
     if (typeof marker !== "undefined" ){ 
       marker.remove();         
-    }
+    } else {
+      initiate_weather();
+    };
 
     //add marker
     marker = new  mapboxgl.Marker({
@@ -49,12 +60,12 @@ $(document).ready(function(){
       var xhr = new XMLHttpRequest();
       xhr.open('POST', '.');
       xhr.onload = function(event){
-        polygon = JSON.parse(event.target.response);
+        var data = JSON.parse(event.target.response);
         map.addSource('field', {
             'type': 'geojson',
             'data': {
                 'type': 'Feature',
-                'geometry': polygon
+                'geometry': data.polygon
             }
         });
         map.addLayer({
@@ -67,6 +78,16 @@ $(document).ready(function(){
                 'fill-opacity': 0.8
             }
         });
+        
+        $('.graphs').empty();
+        var pcpn_graph = JSON.parse(data.pcpn_graph);
+        Bokeh.embed.embed_item(pcpn_graph);
+      
+        var gdd_graph = JSON.parse(data.gdd_graph);
+        Bokeh.embed.embed_item(gdd_graph);
+      
+        var cdd_graph = JSON.parse(data.cdd_graph);
+        Bokeh.embed.embed_item(cdd_graph);
       };
       var formData = new FormData(document.getElementById('map_form'));
       xhr.send(formData);
